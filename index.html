@@ -398,6 +398,20 @@
         // 狀態管理
         let currentStep = 0;
         let images = { student: null, answer: null };
+        let syllabusData = null; // 用來存放從外部讀取的學習內容
+
+        // 載入外部學習內容 (data.json)
+        async function loadSyllabusData() {
+            try {
+                // 讀取根目錄下的 data.json
+                const response = await fetch('data.json');
+                if (!response.ok) throw new Error('讀取 data.json 失敗');
+                syllabusData = await response.json();
+                console.log('✅ 成功載入核心觀念資料庫:', syllabusData);
+            } catch (error) {
+                console.warn('⚠️ 無法載入 data.json。如果您是直接點開 HTML 檔案，可能會遇到 CORS 限制。請使用 Live Server 或上傳到 GitHub Pages 執行。', error);
+            }
+        }
 
         // 模擬的 AI 辨識資料
         const mockExtractedData = [
@@ -417,6 +431,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             // 初始化圖示
             lucide.createIcons();
+            
+            // 啟動時立刻載入外部 JSON 資料
+            loadSyllabusData();
             
             // 檢查 API Key
             const savedKey = localStorage.getItem('gemini_api_key');
